@@ -7,9 +7,8 @@ import store from './store/store';
 import {createRoot} from "react-dom/client";
 
 createRoot(
-    document.getElementById("root"),).render(
+    document.getElementById("root")).render(
     <Provider store={store}>
         <App />
-    </Provider>,
-    document.getElementById('root')
+    </Provider>
 );

@@ -2,7 +2,10 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchTagsFromApi } from '../api/stackOverflowApi';
 
 export const fetchTags = createAsyncThunk('tags/fetchTags', async () => {
-    const response = await fetchTagsFromApi();
+    const response = await fetchTagsFromApi({
+        page_size : 100,
+        page_number : 1,
+    });
     return response.items;
 });
 
