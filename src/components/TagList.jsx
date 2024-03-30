@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, CircularProgress, Grid } from '@mui/material';
-import { fetchTags, selectAllTags, selectTagsStatus, selectHasMore } from '../store/tagsSlice';
+import {Box, CircularProgress, Grid, Typography} from '@mui/material';
+import {fetchTags, selectAllTags, selectTagsStatus, selectHasMore} from '../store/tagsSlice';
 import TagListUI from "./TagListUI";
+import _debounce from "lodash/debounce";
 
 const TagList = () => {
     const dispatch = useDispatch();
@@ -14,9 +15,18 @@ const TagList = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [searchValue, setSearchValue] = useState("");
 
-    useEffect(() => {
-        fetchTagsData();
+    useEffect(async () => {
+        const delayedFetchTags = _debounce(async () => {
+            await fetchTagsData();
+        }, 500);
+        await delayedFetchTags();
+        return delayedFetchTags.cancel;
+    }, [searchValue]);
+
+    useEffect(async () => {
+        await fetchTagsData();
     }, [pageSize, pageNumber, sortType]);
+
 
     const fetchTagsData = async () => {
         try {
@@ -24,6 +34,8 @@ const TagList = () => {
                 page_size: pageSize,
                 page_number: pageNumber,
                 sort_type: sortType,
+                search: searchValue,
+
             }));
 
         } catch (error) {
@@ -66,8 +78,23 @@ const TagList = () => {
     }
 
     if (status === 'failed') {
-        return <div>Error loading tags.</div>;
+        return (
+            <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                minHeight="80vh"
+                color="error.main"
+                p={2}
+                borderRadius={4}
+            >
+                <Typography variant="body1">
+                    Error loading tags. Please try again later.
+                </Typography>
+            </Box>
+        );
     }
+
 
     return (
         <TagListUI
@@ -78,6 +105,8 @@ const TagList = () => {
             sortOptions={[
                 { label: "Popular", value: "popular" },
                 { label: "Name", value: "name" },
+                { label: "New content", value: "activity" },
+
             ]}
             selectedSort={sortType}
             searchValue={searchValue}

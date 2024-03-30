@@ -6,6 +6,7 @@ export const fetchTags = createAsyncThunk('tags/fetchTags', async (props) => {
         page_size: props.page_size,
         page_number: props.page_number,
         sort_type: props.sort_type,
+        search: props.search,
     });
 });
 
@@ -30,7 +31,6 @@ const tagsSlice = createSlice({
             })
             .addCase(fetchTags.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message;
             });
     },
 });

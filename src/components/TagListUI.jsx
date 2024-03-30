@@ -1,34 +1,11 @@
 import React from 'react';
 import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Select,
-    MenuItem,
-    IconButton,
-    InputAdornment, TextField,
-} from "@mui/material";
+    Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select, MenuItem, IconButton, InputAdornment, TextField, Typography,} from "@mui/material";
 import {ArrowBack, ArrowForward, Search} from '@mui/icons-material';
 
 const TagListUI = (props) => {
     const {
-        tags,
-        pageSize,
-        hasMorePages,
-        pageNumber,
-        onPageSizeChange,
-        onPageNumberChange,
-        onSortChange,
-        onSearchChange,
-        sortOptions,
-        selectedSort,
-        searchValue,
-    } = props;
-
+        tags, pageSize, hasMorePages, pageNumber, onPageSizeChange, onPageNumberChange, onSortChange, onSearchChange, sortOptions, selectedSort, searchValue,} = props;
     const handlePageSizeChange = (event) => {
         const newSize = parseInt(event.target.value);
         onPageSizeChange(newSize);
@@ -42,14 +19,12 @@ const TagListUI = (props) => {
         onPageNumberChange(pageNumber + 1);
     };
 
-    const handleSortChange = (event) => {
-        const newSort = event.target.value;
-        onSortChange(newSort);
+    const handleSortChange = (e) => {
+            onSortChange(e.target.value);
     };
 
-    const handleSearchChange = (event) => {
-        const newValue = event.target.value;
-        onSearchChange(newValue);
+    const handleSearchChange = (e) => {
+        onSearchChange(e.target.value);
     };
 
     return (
@@ -71,10 +46,8 @@ const TagListUI = (props) => {
                 </Box>
                 <Box>
                     <Select
-                        label="Sort by"
                         value={selectedSort}
-                        onChange={handleSortChange}
-                    >
+                        onChange={handleSortChange}>
                         {sortOptions.map((option, index) => (
                             <MenuItem key={index} value={option.value}>{option.label}</MenuItem>
                         ))}
@@ -82,14 +55,26 @@ const TagListUI = (props) => {
                 </Box>
             </Box>
             <Box flex="1">
-                <TableContainer style={{ maxHeight: 'calc(100vh - 240px)', overflow: 'auto' }}>
+
+                <TableContainer style={{ maxHeight: 'calc(100vh - 300px)', overflow: 'auto' }}>
                     <Table stickyHeader>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Tag Name</TableCell>
-                                <TableCell>Post Count</TableCell>
+                                <TableCell><strong>Tag Name</strong></TableCell>
+                                <TableCell><strong>Post Count</strong></TableCell>
                             </TableRow>
                         </TableHead>
+                        {!tags.length && (
+                            <TableRow
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                minHeight="20vh">
+                                <Typography variant="p" color="textSecondary">
+                                    No tags found.
+                                </Typography>
+                            </TableRow>
+                        )}
                         <TableBody>
                             {tags.map((tag) => (
                                 <TableRow key={tag.name}>
@@ -104,10 +89,8 @@ const TagListUI = (props) => {
             <Box p={2} borderTop="1px solid #ccc" display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
                     <Select
-                        label="Records per page"
                         value={pageSize}
-                        onChange={handlePageSizeChange}
-                    >
+                        onChange={handlePageSizeChange}>
                         <MenuItem value={25}>25</MenuItem>
                         <MenuItem value={50}>50</MenuItem>
                         <MenuItem value={100}>100</MenuItem>
@@ -117,7 +100,7 @@ const TagListUI = (props) => {
                     <IconButton disabled={pageNumber === 1} onClick={handlePrevPage}>
                         <ArrowBack />
                     </IconButton>
-                    <IconButton disabled={pageNumber === hasMorePages} onClick={handleNextPage}>
+                    <IconButton disabled={pageNumber === hasMorePages || !tags.length} onClick={handleNextPage}>
                         <ArrowForward />
                     </IconButton>
                 </Box>
